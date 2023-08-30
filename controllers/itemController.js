@@ -5,7 +5,16 @@ const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 
 exports.index = asyncHandler(async (req, res, next) => {
-    res.send('index')
+    const [itemCount, categoryCount] = await Promise.all([
+        Item.countDocuments({}).exec(),
+        Category.countDocuments({}).exec()
+    ]);
+
+    res.render('index', {
+        title: 'Tech Inventory',
+        itemCount,
+        categoryCount
+    });
 });
 
 exports.itemList = asyncHandler(async (req, res, next) => {
