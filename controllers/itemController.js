@@ -18,7 +18,12 @@ exports.index = asyncHandler(async (req, res, next) => {
 });
 
 exports.itemList = asyncHandler(async (req, res, next) => {
-    res.send('item list');
+    const itemList = await Item.find({}, 'name company inStock').exec();
+
+    res.render('items/list', {
+        title: 'Item List',
+        itemList
+    })
 });
 
 exports.itemDetail = asyncHandler(async (req, res, next) => {

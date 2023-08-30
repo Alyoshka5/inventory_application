@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+    h1 Items in inventory
+
+    div 
+        each item in itemList 
+            a(href=item.url) #[strong #{item.name}]
+            div by #{item.company}
+            div #{item.inStock} in stock
+            br
+        
+        else
+            p There are no items in inventory
