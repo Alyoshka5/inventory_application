@@ -31,3 +31,18 @@ nav li a {
   font-size: 0.9rem;
 }
 
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+form button {
+  width: 8rem;
+  background-color: #fa5616;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem;
+  cursor: pointer;
+}
