@@ -20,7 +20,7 @@ exports.index = asyncHandler(async (req, res, next) => {
 exports.itemList = asyncHandler(async (req, res, next) => {
     const itemList = await Item.find({}, 'name company inStock').exec();
 
-    res.render('items/list', {
+    res.render('item/list', {
         title: 'Item List',
         itemList
     })
@@ -35,7 +35,7 @@ exports.itemDetail = asyncHandler(async (req, res, next) => {
         return next(err);
     }
 
-    res.render('items/detail', {
+    res.render('item/detail', {
         title: 'Item details',
         item
     })
