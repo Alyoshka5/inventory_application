@@ -1,4 +1,5 @@
 const Category = require('../models/category');
+const Item = require('../models/item');
 
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
@@ -13,7 +14,22 @@ exports.categoryList = asyncHandler(async (req, res, next) => {
 });
 
 exports.categoryDetail = asyncHandler(async (req, res, next) => {
-    res.send('category detail');
+    const [category, itemsInCategory] = await Promise.all([
+        Category.findById(req.params.id).exec(),
+        Item.find({ category: req.params.id }, 'name company inStock').exec()
+    ]);
+
+    if (category === null) {
+        const err = new Error('Category not found');
+        err.status = 404;
+        return next(err);
+    }
+
+    res.render('category/detail', {
+        title: 'Category details',
+        category,
+        itemsInCategory
+    });
 });
 
 exports.categoryCreateGet = asyncHandler(async (req, res, next) => {

@@ -1,0 +1,20 @@
+extends ../layout
+
+block content 
+    h1= title 
+
+    div 
+        h2= category.name 
+        p= category.description
+
+    div 
+        h3 Items in this category 
+
+        each item in itemsInCategory 
+            a(href=item.url) #[strong #{item.name}]
+            div by #{item.company}
+            div #{item.inStock} in stock
+            br
+        
+        else
+            p There are no items in this category
