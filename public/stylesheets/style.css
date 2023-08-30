@@ -17,10 +17,10 @@ nav ul div {
 }
 
 nav li a {
-  text-decoration: none;
   font-size: 0.9rem;
 }
 
 a {
+  text-decoration: none;
   color: #fa5616;
 }
