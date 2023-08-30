@@ -33,12 +33,45 @@ exports.categoryDetail = asyncHandler(async (req, res, next) => {
 });
 
 exports.categoryCreateGet = asyncHandler(async (req, res, next) => {
-    res.send('category create get');
+    res.render('category/form', { title: 'Create category' });
 });
 
-exports.categoryCreatePost = asyncHandler(async (req, res, next) => {
-    res.send('category create post');
-});
+exports.categoryCreatePost = [
+    body('name', 'Category name must contain at least 2 letters')
+        .trim()
+        .isLength({ min: 2 })
+        .escape(),
+
+    body('description')
+        .escape(),
+
+    asyncHandler(async (req, res, next) => {
+        const errors = validationResult(req);
+
+        const category = new Category({
+            name: req.body.name,
+            description: req.body.description,
+        });
+        console.log(category);
+        if (!errors.isEmpty()) {
+            res.render('category/form', {
+                title: 'Create category',
+                category: category,
+                errors: errors.array()
+            });
+            return;
+        }
+
+        const existingCategory = await Category.findOne({ name: req.body.name }).collation({ locale: "en", strength: 2 }).exec();
+        
+        if (existingCategory) {
+            res.redirect(existingCategory.url);
+        } else {
+            await category.save();
+            res.redirect(category.url);
+        }
+    })
+];
 
 exports.categoryUpdateGet = asyncHandler(async (req, res, next) => {
     res.send('category update get');

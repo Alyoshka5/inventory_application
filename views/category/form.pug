@@ -1,0 +1,21 @@
+extends ../layout
+
+block content 
+    h1= title 
+
+    form(action="", method="post") 
+        div 
+            label(for='name') Name: 
+            br
+            input#name(type="text", name="name" value=(category!==undefined  ? category.name : ''))
+        div 
+            label(for='description') Description: 
+            br
+            textarea#description(type="text", name="description")= category!==undefined ? category.description : ''
+
+        button(type="submit")= title
+
+        if errors
+            ul 
+                for error in errors 
+                    li!= error.msg
