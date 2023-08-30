@@ -4,7 +4,12 @@ const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 
 exports.categoryList = asyncHandler(async (req, res, next) => {
-    res.send('category list');
+    const categoryList = await Category.find({}, 'name').exec();
+
+    res.render('category/list', {
+        title: 'Category List',
+        categoryList
+    });
 });
 
 exports.categoryDetail = asyncHandler(async (req, res, next) => {
