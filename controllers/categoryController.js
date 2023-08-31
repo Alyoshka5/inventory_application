@@ -52,7 +52,7 @@ exports.categoryCreatePost = [
             name: req.body.name,
             description: req.body.description,
         });
-        console.log(category);
+        
         if (!errors.isEmpty()) {
             res.render('category/form', {
                 title: 'Create category',
