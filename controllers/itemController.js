@@ -117,9 +117,21 @@ exports.itemUpdatePost = asyncHandler(async (req, res, next) => {
 });
 
 exports.itemDeleteGet = asyncHandler(async (req, res, next) => {
-    res.send('item delete get');
+    const item = await Item.findById(req.params.id).populate('category').exec();
+
+    if (item === null) {
+        const err = new Error('Item not found');
+        err.status = 404;
+        return next(err);
+    }
+    
+    res.render('item/delete', {
+        title: 'Delete item',
+        item
+    });
 });
 
 exports.itemDeletePost = asyncHandler(async (req, res, next) => {
-    res.send('item delete post');
+    await Item.findByIdAndRemove(req.params.id)
+    res.redirect('/inventory/items');
 });
