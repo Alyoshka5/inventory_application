@@ -42,12 +42,71 @@ exports.itemDetail = asyncHandler(async (req, res, next) => {
 });
 
 exports.itemCreateGet = asyncHandler(async (req, res, next) => {
-    res.send('item create get');
+    const categories = await Category.find({}, 'name').exec();
+
+    res.render('item/form', {
+        title: 'Create item',
+        categories
+    });
 });
 
-exports.itemCreatePost = asyncHandler(async (req, res, next) => {
-    res.send('item create post');
-});
+exports.itemCreatePost = [
+    body('name', 'Name must contain at least 3 letters')
+        .trim()
+        .isLength({ min: 3 })
+        .escape(),
+
+    body('company', 'Company must be specified')
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    
+    body('inStock', 'Ammount in stock must be a number and cannot be negative')
+        .isInt({ min: 0 }),
+        
+    body('category', 'Category must be specified')
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+
+    body('price', 'Price must be a decimal number with a minimum value of 0.01')
+        .trim()
+        .isFloat({ min: 0.01 })
+        .escape(),
+        
+    body('description')
+        .escape(),
+
+    asyncHandler(async (req, res, next) => {
+        const errors = validationResult(req);
+
+        const itemPrice = isNaN(req.body.price) || req.body.price.length === 0 ? 0.01 : parseFloat(req.body.price);
+        const item = new Item({
+            name: req.body.name,
+            company: req.body.company,
+            description: req.body.description,
+            category: req.body.category,
+            price: itemPrice,
+            inStock: req.body.inStock
+        });
+
+        if (!errors.isEmpty()) {
+            const categories = await Category.find({}, 'name').exec();
+
+            res.render('item/form', {
+                title: 'Create item',
+                item,
+                categories,
+                selectedCategory: item.category._id,
+                errors: errors.array()
+            });
+            return;
+        }
+
+        item.save();
+        res.redirect(item.url);
+    })
+];
 
 exports.itemUpdateGet = asyncHandler(async (req, res, next) => {
     res.send('item update get');

@@ -1,0 +1,44 @@
+extends ../layout
+
+block content 
+    h1= title 
+
+    form(action="", method="post") 
+        div 
+            label(for='name') Name: 
+            br
+            input#name(type="text", name="name" value=(item!==undefined  ? item.name : ''))
+        
+        div 
+            label(for='company') Company: 
+            br
+            input#company(type="text", name="company" value=(item!==undefined  ? item.company : ''))
+        
+        div 
+            label(for='inStock') In Stock: 
+            br
+            input#inStock(type="number", name="inStock" value=(item!==undefined  ? item.inStock : 0))
+        
+        div 
+            label(for='category') Category: 
+            br
+            select#category(name='category')
+                for category in categories 
+                    option(type="text" value=category._id selected=(selectedCategory == category._id.toString()))= category.name
+        
+        div 
+            label(for='price') Price: 
+            br
+            input#price(type="text", name="price" value=(item!==undefined  ? item.price.toString() : ''))
+        
+        div 
+            label(for='description') Description: 
+            br
+            textarea#description(type="text", name="description")= item!==undefined ? item.description : ''
+
+        button(type="submit")= title
+
+        if errors
+            ul 
+                for error in errors 
+                    li!= error.msg
