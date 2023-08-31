@@ -74,12 +74,51 @@ exports.categoryCreatePost = [
 ];
 
 exports.categoryUpdateGet = asyncHandler(async (req, res, next) => {
-    res.send('category update get');
+    const category = await Category.findById(req.params.id);
+
+    if (category === null) {
+        const err = new Error('Category not found');
+        err.status = 404;
+        return next(err);
+    }
+
+    res.render('category/form', {
+        title: 'Update category',
+        category
+    })
 });
 
-exports.categoryUpdatePost = asyncHandler(async (req, res, next) => {
-    res.send('category update post');
-});
+exports.categoryUpdatePost = [
+    body('name', 'Category name must contain at least 2 letters')
+        .trim()
+        .isLength({ min: 2 })
+        .escape(),
+
+    body('description')
+        .escape(),
+
+    asyncHandler(async (req, res, next) => {
+        const errors = validationResult(req);
+
+        const category = new Category({
+            name: req.body.name,
+            description: req.body.description,
+            _id: req.params.id
+        });
+
+        if (!errors.isEmpty()) {
+            res.render('category/form', {
+                title: 'Update category',
+                category: category,
+                errors: errors.array()
+            });
+            return;
+        }
+
+        await Category.findByIdAndUpdate(req.params.id, category, {});
+        res.redirect(category.url);
+    })
+];
 
 exports.categoryDeleteGet = asyncHandler(async (req, res, next) => {
     const [category, itemsInCategory] = await Promise.all([
