@@ -82,9 +82,25 @@ exports.categoryUpdatePost = asyncHandler(async (req, res, next) => {
 });
 
 exports.categoryDeleteGet = asyncHandler(async (req, res, next) => {
-    res.send('category delete get');
+    const [category, itemsInCategory] = await Promise.all([
+        Category.findById(req.params.id).exec(),
+        Item.find({ category: req.params.id }, 'name company inStock').exec()
+    ]);
+
+    if (category === null) {
+        const err = new Error('Category not found');
+        err.status = 404;
+        return next(err);
+    }
+
+    res.render('category/delete', {
+        title: 'Category details',
+        category,
+        itemsInCategory
+    });
 });
 
 exports.categoryDeletePost = asyncHandler(async (req, res, next) => {
-    res.send('category delete post');
+    await Category.findByIdAndRemove(req.params.id);
+    res.redirect('/inventory/categories');
 });
