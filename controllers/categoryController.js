@@ -32,9 +32,9 @@ exports.categoryDetail = asyncHandler(async (req, res, next) => {
     });
 });
 
-exports.categoryCreateGet = asyncHandler(async (req, res, next) => {
+exports.categoryCreateGet = async (req, res, next) => {
     res.render('category/form', { title: 'Create category' });
-});
+};
 
 exports.categoryCreatePost = [
     body('name', 'Category name must contain at least 2 letters')
