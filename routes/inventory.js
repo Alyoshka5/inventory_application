@@ -4,18 +4,31 @@ const categoryController = require('../controllers/categoryController');
 const express = require('express');
 const router = express.Router();
 
-router.get('/', itemController.index);
+const multer = require('multer');
 
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, './public/images/uploads')
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + file.originalname;
+      cb(null, file.fieldname + '-' + uniqueSuffix);
+    }
+});
+const upload = multer({ storage: storage });
+
+
+router.get('/', itemController.index);
 
 // item routes
 
 router.get('/item/create', itemController.itemCreateGet);
 
-router.post('/item/create', itemController.itemCreatePost);
+router.post('/item/create', upload.single('itemImage'), itemController.itemCreatePost);
 
 router.get('/item/:id/update', itemController.itemUpdateGet);
 
-router.post('/item/:id/update', itemController.itemUpdatePost);
+router.post('/item/:id/update', upload.single('itemImage'), itemController.itemUpdatePost);
 
 router.get('/item/:id/delete', itemController.itemDeleteGet);
 
