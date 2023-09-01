@@ -4,6 +4,7 @@ const Category = require('../models/category');
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 
+
 exports.index = asyncHandler(async (req, res, next) => {
     const [itemCount, categoryCount] = await Promise.all([
         Item.countDocuments({}).exec(),
@@ -78,6 +79,7 @@ exports.itemCreatePost = [
         .escape(),
 
     asyncHandler(async (req, res, next) => {
+        
         const errors = validationResult(req);
 
         const itemPrice = isNaN(req.body.price) || req.body.price.length === 0 ? 0.01 : parseFloat(req.body.price);
@@ -87,8 +89,10 @@ exports.itemCreatePost = [
             description: req.body.description,
             category: req.body.category,
             price: itemPrice,
-            inStock: req.body.inStock
+            inStock: req.body.inStock,
         });
+        if (req.file)
+            item.image = req.file.filename;
 
         if (!errors.isEmpty()) {
             const categories = await Category.find({}, 'name').exec();
@@ -168,6 +172,8 @@ exports.itemUpdatePost = [
             inStock: req.body.inStock,
             _id: req.params.id
         });
+        if (req.file)
+            item.image = req.file.filename;
 
         if (!errors.isEmpty()) {
             const categories = await Category.find({}, 'name').exec();

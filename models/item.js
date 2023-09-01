@@ -8,7 +8,8 @@ const ItemSchema = new Schema({
     description: { type: String, maxLength: 200 },
     category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
     price: { type: Schema.Types.Decimal128, required: true, min: 0.01 },
-    inStock: { type: Number, required: true, min: 0 }
+    inStock: { type: Number, required: true, min: 0 },
+    image: { type: String }
 });
 
 ItemSchema.virtual('url').get(function() {

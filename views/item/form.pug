@@ -3,7 +3,7 @@ extends ../layout
 block content 
     h1= title 
 
-    form(action="", method="post") 
+    form(action="", method="post" enctype='multipart/form-data') 
         div 
             label(for='name') Name: 
             br
@@ -35,6 +35,11 @@ block content
             label(for='description') Description: 
             br
             textarea#description(type="text", name="description")= item!==undefined ? item.description : ''
+        
+        div 
+            label(for='image') Upload image: 
+            br
+            input#image(type="file", name="itemImage" )
 
         button(type="submit")= title
 
