@@ -128,6 +128,7 @@ exports.itemUpdateGet = asyncHandler(async (req, res, next) => {
         title: 'Update item',
         item,
         selectedCategory: item.category._id,
+        action: 'update',
         categories
     });
 });
@@ -175,6 +176,9 @@ exports.itemUpdatePost = [
         if (req.file)
             item.image = req.file.filename;
 
+        if (req.body.adminPassword !== process.env.ADMIN_PASS)
+            errors.errors.push({ msg: 'Admin password invalid' });
+
         if (!errors.isEmpty()) {
             const categories = await Category.find({}, 'name').exec();
 
@@ -183,6 +187,7 @@ exports.itemUpdatePost = [
                 item,
                 categories,
                 selectedCategory: item.category._id,
+                action: 'update',
                 errors: errors.array()
             });
             return;
@@ -209,6 +214,22 @@ exports.itemDeleteGet = asyncHandler(async (req, res, next) => {
 });
 
 exports.itemDeletePost = asyncHandler(async (req, res, next) => {
+    if (req.body.adminPassword != process.env.ADMIN_PASS) {
+        const item = await Item.findById(req.params.id).populate('category').exec();
+
+        if (item === null) {
+            const err = new Error('Item not found');
+            err.status = 404;
+            return next(err);
+        }
+
+        res.render('item/delete', {
+            title: 'Delete item',
+            item,
+            error: 'Admin password invalid'
+        });
+        return;
+    }
     await Item.findByIdAndRemove(req.params.id)
     res.redirect('/inventory/items');
 });

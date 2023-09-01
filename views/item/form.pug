@@ -41,6 +41,10 @@ block content
             br
             input#image(type="file", name="itemImage" )
 
+        div 
+            h3 Enter admin password to update item
+            input(type="password" name='adminPassword' placeholder='admin password' style='width: 10rem')
+
         button(type="submit")= title
 
         if errors
