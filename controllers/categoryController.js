@@ -84,7 +84,8 @@ exports.categoryUpdateGet = asyncHandler(async (req, res, next) => {
 
     res.render('category/form', {
         title: 'Update category',
-        category
+        category,
+        action: 'update'
     })
 });
 
@@ -106,10 +107,14 @@ exports.categoryUpdatePost = [
             _id: req.params.id
         });
 
+        if (req.body.adminPassword !== process.env.ADMIN_PASS)
+            errors.errors.push({ msg: 'Admin password invalid' });
+
         if (!errors.isEmpty()) {
             res.render('category/form', {
                 title: 'Update category',
                 category: category,
+                action: 'update',
                 errors: errors.array()
             });
             return;
@@ -140,6 +145,27 @@ exports.categoryDeleteGet = asyncHandler(async (req, res, next) => {
 });
 
 exports.categoryDeletePost = asyncHandler(async (req, res, next) => {
+    if (req.body.adminPassword != process.env.ADMIN_PASS) {
+        const [category, itemsInCategory] = await Promise.all([
+            Category.findById(req.params.id).exec(),
+            Item.find({ category: req.params.id }, 'name company inStock').exec()
+        ]);
+    
+        if (category === null) {
+            const err = new Error('Category not found');
+            err.status = 404;
+            return next(err);
+        }
+    
+        res.render('category/delete', {
+            title: 'Category details',
+            category,
+            itemsInCategory,
+            error: 'Admin password invalid'
+        });
+        return;
+    }
+
     await Category.findByIdAndRemove(req.params.id);
     res.redirect('/inventory/categories');
 });

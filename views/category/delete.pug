@@ -18,6 +18,8 @@ block content
                 br
             
     else 
-        h3 Are you sure you want to delete this category?
+        h3 Enter admin password to delete category
         form(action="" method='post')
+            input(type="password" name='adminPassword' placeholder='admin password' style='width: 10rem')
+            div= error
             button(type="submit") Delete 
